@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEON BRUTALIST BAR // POST-PUNK</title>
+    <title>NEON BRUTALIST BAR // FULL CONTROL</title>
     <style>
         :root {
             --bg-color: #000000;
@@ -24,7 +24,6 @@
             border: 20px solid var(--neon-blue);
         }
 
-        /* Header e Controles */
         header {
             background: var(--neon-pink);
             color: black;
@@ -33,13 +32,18 @@
             text-align: center;
         }
 
+        /* Painel de Controles Giratórios */
         .control-panel {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 20px;
             padding: 40px;
             background: black;
-            overflow: hidden;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 5px solid var(--white);
         }
 
         .neon-btn {
@@ -53,30 +57,27 @@
             font-size: 0.8rem;
             font-weight: bold;
             animation: rotateBtn 4s linear infinite;
-            text-decoration: none;
+            background: transparent;
             color: white;
-            text-align: center;
+            cursor: pointer;
         }
 
         .btn-play { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
         .btn-stop { border-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); animation-duration: 3s; }
         .btn-next { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); animation-duration: 5s; }
-        .btn-all { border-color: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); color: black; background: var(--neon-yellow); }
+        .btn-all { border-color: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); color: var(--neon-yellow); }
 
-        @keyframes rotateBtn {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        @keyframes rotateBtn { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .marquee {
             background: var(--neon-green);
             color: black;
             padding: 15px;
             font-weight: 900;
-            border-y: 5px solid black;
+            border-bottom: 5px solid black;
         }
 
-        /* Grid de Bebidas */
+        /* Grid de Vídeos (Design Anterior) */
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -87,12 +88,13 @@
             background: #0a0a0a;
             padding: 30px;
             position: relative;
+            transition: 0.3s;
         }
 
-        .video-box:nth-child(4n+1) { border-color: var(--neon-pink); }
-        .video-box:nth-child(4n+2) { border-color: var(--neon-blue); }
-        .video-box:nth-child(4n+3) { border-color: var(--neon-green); }
-        .video-box:nth-child(4n+4) { border-color: var(--neon-yellow); }
+        .video-box.highlight {
+            outline: 10px solid var(--white);
+            z-index: 10;
+        }
 
         .drink-name {
             font-size: 1.5rem;
@@ -105,21 +107,24 @@
             box-shadow: 8px 8px 0px var(--neon-pink);
         }
 
-        iframe {
+        .video-wrapper {
+            position: relative;
             width: 100%;
             aspect-ratio: 16/9;
             border: 2px solid white;
-            filter: saturate(0) brightness(0.8);
         }
 
-        iframe:hover { filter: saturate(1.5) brightness(1); }
-
-        footer {
-            padding: 80px;
-            background: var(--neon-blue);
-            color: black;
-            text-align: center;
+        iframe {
+            width: 100%;
+            height: 100%;
+            filter: grayscale(1);
         }
+
+        .video-box:hover iframe, .video-box.highlight iframe {
+            filter: grayscale(0);
+        }
+
+        footer { padding: 80px; background: var(--neon-blue); color: black; text-align: center; }
     </style>
 </head>
 <body>
@@ -129,15 +134,15 @@
     </header>
 
     <div class="control-panel">
-        <a href="#" class="neon-btn btn-play">PLAY ▶️</a>
-        <a href="#" class="neon-btn btn-stop">STOP ⏹️</a>
-        <a href="#" class="neon-btn btn-next">NEXT ⏭️</a>
-        <a href="#" class="neon-btn btn-next">PREV ⏮️</a>
-        <a href="#" class="neon-btn btn-all">ALL 38 ⚡</a>
+        <button class="neon-btn btn-play" onclick="controlPlayer('play')">PLAY<br>▶️</button>
+        <button class="neon-btn btn-stop" onclick="controlPlayer('stop')">STOP<br>⏹️</button>
+        <button class="neon-btn btn-next" onclick="controlPlayer('prev')">PREV<br>⏮️</button>
+        <button class="neon-btn btn-next" onclick="controlPlayer('next')">NEXT<br>⏭️</button>
+        <button class="neon-btn btn-all" onclick="alert('38 DRINKS CARREGADOS NO SISTEMA')">ALL 38<br>⚡</button>
     </div>
 
     <div class="marquee">
-        <marquee scrollamount="20">WELCOME TO THE VOID // ORDER YOUR DRINK // 38 SHOTS OF DEPRESSION // DRINK LOUD // JOY DIVISION STYLE</marquee>
+        <marquee scrollamount="20">USE THE WHEELS TO CONTROL THE VIBE // SYSTEM READY // 38 TRACKS INTEGRATED // NO EXIT</marquee>
     </div>
 
     <div class="container" id="playlist">
@@ -172,23 +177,64 @@
             'eClVrSAVTMo', 'ZFiMA2tfNjg', 'IAWt359KMn8'
         ];
 
+        let currentActiveIndex = 0;
         const container = document.getElementById('playlist');
 
+        // Criar a Interface
         videoIds.forEach((id, index) => {
             const drinkName = drinks[index] || `DRINK #${index + 1} ⚡`;
             const box = document.createElement('div');
             box.className = 'video-box';
+            box.id = `box-${index}`;
             box.innerHTML = `
                 <span class="drink-name">${drinkName}</span>
-                <iframe 
-                    src="https://www.youtube.com/embed/${id}" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
+                <div class="video-wrapper">
+                    <iframe 
+                        id="player-${index}"
+                        src="https://www.youtube.com/embed/${id}?enablejsapi=1" 
+                        frameborder="0" 
+                        allow="autoplay; encrypted-media" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
             `;
             container.appendChild(box);
         });
+
+        // Função de Controle dos Botões Giratórios
+        function controlPlayer(action) {
+            const currentIframe = document.getElementById(`player-${currentActiveIndex}`);
+            
+            if (action === 'play') {
+                currentIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            } 
+            else if (action === 'stop') {
+                currentIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            } 
+            else if (action === 'next' || action === 'prev') {
+                // Para o vídeo atual
+                currentIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                document.getElementById(`box-${currentActiveIndex}`).classList.remove('highlight');
+
+                // Calcula novo index
+                if (action === 'next') {
+                    currentActiveIndex = (currentActiveIndex + 1) % videoIds.length;
+                } else {
+                    currentActiveIndex = (currentActiveIndex - 1 + videoIds.length) % videoIds.length;
+                }
+
+                // Scroll até o novo vídeo e destaca
+                const nextBox = document.getElementById(`box-${currentActiveIndex}`);
+                nextBox.classList.add('highlight');
+                nextBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Play no novo vídeo
+                const nextIframe = document.getElementById(`player-${currentActiveIndex}`);
+                setTimeout(() => {
+                    nextIframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                }, 500);
+            }
+        }
     </script>
 </body>
 </html>
