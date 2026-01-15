@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON BRUTALIST BAR // POST-PUNK</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --neon-pink: #ff00ff;
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-yellow: #fff01f;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--white);
+            font-family: 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            border: 20px solid var(--neon-blue);
+        }
+
+        /* Header e Controles */
+        header {
+            background: var(--neon-pink);
+            color: black;
+            padding: 40px 20px;
+            border-bottom: 10px solid black;
+            text-align: center;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px;
+            background: black;
+            overflow: hidden;
+        }
+
+        .neon-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 5px solid var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: rotateBtn 4s linear infinite;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+        }
+
+        .btn-play { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+        .btn-stop { border-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); animation-duration: 3s; }
+        .btn-next { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); animation-duration: 5s; }
+        .btn-all { border-color: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); color: black; background: var(--neon-yellow); }
+
+        @keyframes rotateBtn {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .marquee {
+            background: var(--neon-green);
+            color: black;
+            padding: 15px;
+            font-weight: 900;
+            border-y: 5px solid black;
+        }
+
+        /* Grid de Bebidas */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .video-box {
+            border: 5px solid black;
+            background: #0a0a0a;
+            padding: 30px;
+            position: relative;
+        }
+
+        .video-box:nth-child(4n+1) { border-color: var(--neon-pink); }
+        .video-box:nth-child(4n+2) { border-color: var(--neon-blue); }
+        .video-box:nth-child(4n+3) { border-color: var(--neon-green); }
+        .video-box:nth-child(4n+4) { border-color: var(--neon-yellow); }
+
+        .drink-name {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            background: white;
+            color: black;
+            display: block;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 8px 8px 0px var(--neon-pink);
+        }
+
+        iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: 2px solid white;
+            filter: saturate(0) brightness(0.8);
+        }
+
+        iframe:hover { filter: saturate(1.5) brightness(1); }
+
+        footer {
+            padding: 80px;
+            background: var(--neon-blue);
+            color: black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 style="font-size: 8vw; line-height: 0.9;">NEON BAR<br>POST-PUNK</h1>
+    </header>
+
+    <div class="control-panel">
+        <a href="#" class="neon-btn btn-play">PLAY ▶️</a>
+        <a href="#" class="neon-btn btn-stop">STOP ⏹️</a>
+        <a href="#" class="neon-btn btn-next">NEXT ⏭️</a>
+        <a href="#" class="neon-btn btn-next">PREV ⏮️</a>
+        <a href="#" class="neon-btn btn-all">ALL 38 ⚡</a>
+    </div>
+
+    <div class="marquee">
+        <marquee scrollamount="20">WELCOME TO THE VOID // ORDER YOUR DRINK // 38 SHOTS OF DEPRESSION // DRINK LOUD // JOY DIVISION STYLE</marquee>
+    </div>
+
+    <div class="container" id="playlist">
+        </div>
+
+    <footer>
+        <h2>LAST CALL: 03:00 AM // NO FUTURE</h2>
+    </footer>
+
+    <script>
+        const drinks = [
+            "Tequila Shot 🌵", "Gin Tonic 🍸", "Absinthe 🧚", "Vodka Skull 💀", 
+            "Neon Martini 🍸", "Whisky Neat 🥃", "Dark Lager 🍺", "Bloody Mary 🍅", 
+            "Rum Punch 🍹", "Punk Juice 🧪", "Static Wine 🍷", "Cyber Beer 🍺",
+            "Margarita 🧂", "Negroni 🍊", "Old Fashioned 🧊", "Black Russian ☕",
+            "Moscow Mule 🦄", "Sake Bomb 💣", "Cachaça 🍋", "Jäger Shot 🦌",
+            "Mojito 🍃", "Cosmopolitan 💅", "Mai Tai 🗿", "Sidecar 🏎️",
+            "Blue Lagoon 🌊", "Zombie 🧟", "Pina Colada 🥥", "White Lady 👰",
+            "Manhattan 🏙️", "Paloma 🕊️", "Dark & Stormy ⛈️", "Vesper 🕵️",
+            "Gimlet 🔫", "Caipirinha 🇧🇷", "Aperol Spritz 🍊", "B-52 ✈️",
+            "Rusty Nail 🔨", "Death in the Afternoon ☠️"
+        ];
+
+        const videoIds = [
+            '-HeCgOiirV4', 'tBpQ1f77PDA', 'h4Jnv-pb6sk', 'A_ZJnKoMoBA', '9CvpeDHgCpo', 
+            'LHUz8vA_wCM', 'bIGoN8_vv_Y', 'npQwX2X3WBE', 'qLQ0PZ-Zwc8', 'bjxfcGJM3V4', 
+            'DOzdBjtA9H0', 'qFtiH1bZuJ0', 'FaHMRB30HmA', 'VdAlPCrndT8', 'gebchYvcp2s', 
+            '77GxLUUEcHo', 'bYM8iPn47yE', 'bpxKOOUhLs8', 'y0AaKrZLFQo', 'LVQi3iyx_Hc', 
+            'ElcwzDwdYkA', 'F3VwhAe7Ks0', 'mwooX2qXrwE', 'lAt6qFZby5w', 'Wj1r0bU3pkg', 
+            '5zS9CbU1gxY', 'pO4lvJUwrwk', 'X8wAX8uZHi8', '4AcNJQYb0Rw', '6170iawsQHE', 
+            'Md-lRIvg27U', 'qWSh3b3V6dc', 'A4ldE3PmnE8', 'knA4zVaDrnk', 'Hd65xQn5tCw', 
+            'eClVrSAVTMo', 'ZFiMA2tfNjg', 'IAWt359KMn8'
+        ];
+
+        const container = document.getElementById('playlist');
+
+        videoIds.forEach((id, index) => {
+            const drinkName = drinks[index] || `DRINK #${index + 1} ⚡`;
+            const box = document.createElement('div');
+            box.className = 'video-box';
+            box.innerHTML = `
+                <span class="drink-name">${drinkName}</span>
+                <iframe 
+                    src="https://www.youtube.com/embed/${id}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            `;
+            container.appendChild(box);
+        });
+    </script>
+</body>
+</html>
