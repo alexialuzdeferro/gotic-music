@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEON BRUTALIST BAR // AUTOMATIC JUKEBOX</title>
     <style>
         :root {
@@ -14,47 +14,80 @@
             --white: #ffffff;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            cursor: crosshair; 
+            -webkit-tap-highlight-color: transparent;
+        }
 
         body {
             background-color: var(--bg-color);
             color: var(--white);
             font-family: 'Arial Black', sans-serif;
             text-transform: uppercase;
-            border: 20px solid var(--neon-pink);
+            border: 10px solid var(--neon-pink);
+            overflow-x: hidden;
+        }
+
+        /* Ajuste para mobile */
+        @media (max-width: 768px) {
+            body {
+                border-width: 5px;
+            }
         }
 
         header {
             background: var(--neon-blue);
             color: black;
-            padding: 40px 20px;
-            border-bottom: 10px solid black;
+            padding: 20px 15px;
+            border-bottom: 5px solid black;
             text-align: center;
         }
 
-        /* Painel de Controles Giratórios */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 10px;
+            }
+            
+            header h1 {
+                font-size: 10vw !important;
+                line-height: 1 !important;
+            }
+        }
+
+        /* Painel de Controles Giratórios - MOBILE FIRST */
         .control-panel {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 40px;
+            flex-wrap: nowrap;
+            gap: 10px;
+            padding: 15px 10px;
             background: black;
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 5px solid var(--white);
+            border-bottom: 3px solid var(--white);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .control-panel::-webkit-scrollbar {
+            display: none;
         }
 
         .neon-btn {
-            width: 100px;
-            height: 100px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 5px solid var(--white);
+            border: 3px solid var(--white);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: bold;
             animation: rotateBtn 4s linear infinite;
             background: transparent;
@@ -62,51 +95,107 @@
             cursor: pointer;
             text-align: center;
             line-height: 1.1;
+            flex-shrink: 0;
+            padding: 5px;
+            touch-action: manipulation;
         }
 
-        .btn-play { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
-        .btn-stop { border-color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); animation-duration: 3s; }
-        .btn-next { border-color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); animation-duration: 5s; }
-        .btn-all { border-color: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); color: var(--neon-yellow); animation-duration: 2s;}
+        @media (max-width: 480px) {
+            .neon-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 0.6rem;
+            }
+        }
 
-        @keyframes rotateBtn { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @media (max-width: 360px) {
+            .neon-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 0.55rem;
+            }
+        }
+
+        .btn-play { border-color: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+        .btn-stop { border-color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); animation-duration: 3s; }
+        .btn-next { border-color: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); animation-duration: 5s; }
+        .btn-all { border-color: var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow); color: var(--neon-yellow); animation-duration: 2s;}
+
+        @keyframes rotateBtn { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+        }
+
+        /* Reduzir animação para melhor performance mobile */
+        @media (prefers-reduced-motion: reduce) {
+            .neon-btn {
+                animation: none;
+            }
+        }
 
         .marquee {
             background: var(--neon-yellow);
             color: black;
-            padding: 15px;
+            padding: 10px 5px;
             font-weight: 900;
-            border-bottom: 5px solid black;
+            border-bottom: 3px solid black;
+            font-size: 0.9rem;
+            overflow: hidden;
         }
 
-        /* Grid de Vídeos */
+        @media (max-width: 480px) {
+            .marquee {
+                font-size: 0.8rem;
+                padding: 8px 5px;
+            }
+        }
+
+        /* Grid de Vídeos - Mobile First */
         .container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+            padding: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 8px;
+            }
         }
 
         .video-box {
-            border: 5px solid black;
+            border: 3px solid black;
             background: #0a0a0a;
-            padding: 30px;
+            padding: 15px;
             position: relative;
             transition: 0.3s;
         }
 
         .video-box.highlight {
-            outline: 10px solid var(--neon-green);
+            outline: 5px solid var(--neon-green);
             z-index: 10;
         }
 
         .drink-name {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
             background: white;
             color: black;
             display: block;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            box-shadow: 8px 8px 0px var(--neon-pink);
+            box-shadow: 4px 4px 0px var(--neon-pink);
+            word-break: break-word;
+        }
+
+        @media (max-width: 480px) {
+            .drink-name {
+                font-size: 1rem;
+                padding: 6px;
+                margin-bottom: 8px;
+            }
         }
 
         .video-wrapper {
@@ -119,29 +208,70 @@
         iframe {
             width: 100%;
             height: 100%;
+            border: none;
         }
 
         /* Rodapé de Advertência */
         footer {
-            padding: 60px 20px;
+            padding: 30px 15px;
             background: #ff0000;
             color: white;
             text-align: center;
-            border-top: 10px solid black;
+            border-top: 5px solid black;
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                padding: 20px 10px;
+            }
         }
 
         .warning-box {
-            border: 5px dashed white;
-            padding: 20px;
+            border: 3px dashed white;
+            padding: 15px;
             display: inline-block;
-            max-width: 800px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .warning-box h2 {
+                font-size: 1.3rem !important;
+            }
+            
+            .warning-box p {
+                font-size: 0.9rem !important;
+                line-height: 1.3;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .warning-box {
+                padding: 10px;
+            }
+            
+            .warning-box h2 {
+                font-size: 1.1rem !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .warning-box p {
+                font-size: 0.8rem !important;
+            }
+        }
+
+        /* Ajustes para iPhone/Safari */
+        @supports (-webkit-touch-callout: none) {
+            .neon-btn {
+                cursor: pointer;
+            }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1 style="font-size: 8vw; line-height: 0.9;">NEON BAR<br>JUKEBOX</h1>
+        <h1 style="font-size: clamp(2rem, 8vw, 4rem); line-height: 1.1;">NEON BAR<br>JUKEBOX</h1>
     </header>
 
     <div class="control-panel">
@@ -153,18 +283,19 @@
     </div>
 
     <div class="marquee">
-        <marquee scrollamount="20">AUTO-STOP ACTIVATED // ONE DRINK AT A TIME // 38 SHOTS OF POST-PUNK // SYSTEM OVERRIDE</marquee>
+        <marquee scrollamount="8">AUTO-STOP ACTIVATED // ONE DRINK AT A TIME // 38 SHOTS OF POST-PUNK // SYSTEM OVERRIDE</marquee>
     </div>
 
     <div class="container" id="playlist">
-        </div>
+        <!-- Vídeos serão injetados aqui -->
+    </div>
 
     <footer>
         <div class="warning-box">
-            <h2 style="font-size: 2rem; margin-bottom: 10px;">⚠️ ADVERTÊNCIA DO BARMAN ⚠️</h2>
-            <p style="font-size: 1.2rem;">CONSUMA O PÓS-PUNK COM MODERAÇÃO. SE VOCÊ ENTRAR NO TRANSE DO BAIXO DISTORCIDO, NÃO DIRIJA SUA MÁQUINA DO TEMPO. CURTIR JOY DIVISION EM EXCESSO PODE CAUSAR EXISTENCIALISMO AGUDO. BEBA MÚSICA, NÃO ÓDIO.</p>
+            <h2 style="font-size: 1.5rem; margin-bottom: 10px;">⚠️ ADVERTÊNCIA DO BARMAN ⚠️</h2>
+            <p style="font-size: 1rem;">CONSUMA O PÓS-PUNK COM MODERAÇÃO. SE VOCÊ ENTRAR NO TRANSE DO BAIXO DISTORCIDO, NÃO DIRIJA SUA MÁQUINA DO TEMPO. CURTIR JOY DIVISION EM EXCESSO PODE CAUSAR EXISTENCIALISMO AGUDO. BEBA MÚSICA, NÃO ÓDIO.</p>
         </div>
-        <p style="margin-top: 30px;">VOID BAR © 2026 - TODOS OS DIREITOS RESERVADOS AO CAOS.</p>
+        <p style="margin-top: 20px; font-size: 0.8rem;">VOID BAR © 2026 - TODOS OS DIREITOS RESERVADOS AO CAOS.</p>
     </footer>
 
     <script>
@@ -197,7 +328,8 @@
                 <div class="video-wrapper">
                     <iframe id="player-${index}" 
                         src="https://www.youtube.com/embed/${id}?enablejsapi=1&rel=0" 
-                        frameborder="0" allow="autoplay" allowfullscreen>
+                        frameborder="0" allow="autoplay; encrypted-media" allowfullscreen
+                        loading="lazy">
                     </iframe>
                 </div>
             `;
@@ -241,7 +373,13 @@
         function playAllSequential() {
             isSequential = true;
             currentActiveIndex = 0;
-            alert("SISTEMA DE SEQUÊNCIA ATIVADO: OS 38 DRINKS SERÃO SERVIDOS UM APÓS O OUTRO.");
+            // Substituído alert por um aviso menos intrusivo
+            const warning = document.createElement('div');
+            warning.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: black; color: var(--neon-yellow); padding: 15px; border: 2px solid var(--neon-yellow); z-index: 9999; text-align: center; max-width: 90%;';
+            warning.innerHTML = '<strong>SISTEMA DE SEQUÊNCIA ATIVADO</strong><br>OS 38 DRINKS SERÃO SERVIDOS UM APÓS O OUTRO.';
+            document.body.appendChild(warning);
+            setTimeout(() => warning.remove(), 2000);
+            
             changeTrack(0);
         }
 
@@ -259,6 +397,8 @@
             }, 500);
         });
 
+        // Adicionar suporte a toque para melhor experiência mobile
+        document.addEventListener('touchstart', function() {}, {passive: true});
     </script>
 </body>
 </html>
